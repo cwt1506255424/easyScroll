@@ -2,7 +2,7 @@
   <div id="app">
     <!--<h1>hello easyScroll</h1>-->
     dhashdkjasdas
-    <easy-scroll>
+    <easy-scroll :easyData="dataList">
       <div class="easyContentBox">
         <div>你是
           <div v-for="(item,index) in this.dataList" class="listItem" @click="show">
@@ -64,5 +64,6 @@
     background-color: aqua;
     height: 500px;
     overflow-y: scroll;
+    z-index: 1;
   }
 </style>

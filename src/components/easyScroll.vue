@@ -66,7 +66,7 @@
         //添加事件
         if (scrollDom) {
           scrollDom.addEventListener('touchstart', function (e) {
-            this.initTouch = e.targetTouches[0].screenY
+            that.initTouch = e.targetTouches[0].screenY
           })
           scrollDom.addEventListener('touchend', function (e) {
             scrollDom.style.top = -that.easyPointHeight + 'px'
@@ -76,12 +76,12 @@
             //获取滚动的头部
             let scTop = scrollDom.scrollTop
 
-            if (scTop === 0 && e.targetTouches[0].screenY - this.initTouch > 0) {
+            if (scTop === 0 && e.targetTouches[0].screenY - that.initTouch > 0) {
               console.log('要下拉了')
-              that.setTop(e, scrollDom, this.initTouch)
-            } else if (scrollChildLength === scTop + contentHeight && e.targetTouches[0].screenY - this.initTouch < 0) {
+              that.setTop(e, scrollDom, that.initTouch)
+            } else if (scrollChildLength === scTop + contentHeight && e.targetTouches[0].screenY - that.initTouch < 0) {
               console.log("要上拉了")
-              that.setTop(e, scrollDom, this.initTouch)
+              that.setTop(e, scrollDom, that.initTouch)
             }
           })
         }

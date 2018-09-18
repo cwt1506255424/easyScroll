@@ -7,13 +7,15 @@
         <div>你是
           <div v-for="(item,index) in this.dataList" class="listItem" @click="show">
             {{item}}
-            <div>呵呵</div>
           </div>
         </div>
       </div>
     </easy-scroll>
     <div>
       dfnsakjnfkanfa
+    </div>
+    <div @click="show">
+      点击可添往列表中继续添加数据
     </div>
   </div>
 </template>
@@ -34,7 +36,7 @@
     },
     methods: {
       show: function () {
-        alert("hahaha")
+        this.dataList.push(1,2,3,4)
       }
     },
     components: {easyScroll},

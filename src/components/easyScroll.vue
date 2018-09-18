@@ -34,13 +34,62 @@
     methods: {
       //刷新dom高度的方法
       refreshHeight: function () {
+        let that = this
+        //firstElementChild
 
+        //上拉的提示定位不准，需要修复
+        this.$refs.easyPointUp.style.top = -2 * this.easyPointHeight + 'px'
+
+        //拿到slot插槽中的dom
+        let scrollDom = this.$refs.easyContent.children[1]
+
+        //拿到slot插槽中的dom的所有的子元素
+        let scrollChild = scrollDom.children
+
+        /*设置top先隐藏加载圆点*/
+        scrollDom.style.top = -this.easyPointHeight + 'px'
+
+        //获取父组件中用户设置的需要滚动的高度
+        let contentHeight = scrollDom.offsetHeight
+
+        //将该组件的外层设置高度和slot插槽一样高
+        this.$refs.easyContent.style.height = contentHeight + 'px'
+
+        //根据scrollChild获取滚动元素的总高度
+        let scrollChildLength = 0
+        setTimeout(function () {
+          for (let i = 0; i < scrollChild.length; i++) {
+            scrollChildLength += scrollChild[i].offsetHeight
+          }
+        }, 20)
+
+        //添加事件
+        if (scrollDom) {
+          scrollDom.addEventListener('touchstart', function (e) {
+            this.initTouch = e.targetTouches[0].screenY
+          })
+          scrollDom.addEventListener('touchend', function (e) {
+            scrollDom.style.top = -that.easyPointHeight + 'px'
+            scrollDom.style.height = contentHeight + 'px'
+          })
+          scrollDom.addEventListener('touchmove', function (e) {
+            //获取滚动的头部
+            let scTop = scrollDom.scrollTop
+
+            if (scTop === 0 && e.targetTouches[0].screenY - this.initTouch > 0) {
+              console.log('要下拉了')
+              that.setTop(e, scrollDom, this.initTouch)
+            } else if (scrollChildLength === scTop + contentHeight && e.targetTouches[0].screenY - this.initTouch < 0) {
+              console.log("要上拉了")
+              that.setTop(e, scrollDom, this.initTouch)
+            }
+          })
+        }
       },
       //设置top的方法
       setTop: function (e, scrollDom, initTouch) {
         let diffY = (e.targetTouches[0].screenY - initTouch) / 4
-        console.log(diffY)
-        if (Math.abs(diffY) <= 50) {
+        if (Math.abs(diffY) <= this.easyPointHeight) {
           scrollDom.style.top = (diffY - this.easyPointHeight) + 'px'
         }
       }
@@ -56,57 +105,7 @@
       }
     },
     mounted: function () {
-      let that = this
-      //firstElementChild
-
-      //上拉的提示定位不准，需要修复
-      this.$refs.easyPointUp.style.top = -2 * this.easyPointHeight + 'px'
-
-      //拿到slot插槽中的dom
-      let scrollDom = this.$refs.easyContent.children[1]
-      //拿到slot插槽中的dom的所有的子元素
-      let scrollChild = scrollDom.children
-
-      /*设置top先隐藏加载圆点*/
-      scrollDom.style.top = -this.easyPointHeight + 'px'
-
-      //获取父组件中用户设置的需要滚动的高度
-      let contentHeight = scrollDom.offsetHeight
-
-      //将该组件的外层设置高度和slot插槽一样高
-      this.$refs.easyContent.style.height = contentHeight + 'px'
-
-      //根据scrollChild获取滚动元素的总高度
-      let scrollChildLength = 0
-      setTimeout(function () {
-        for (let i = 0; i < scrollChild.length; i++) {
-          scrollChildLength += scrollChild[i].offsetHeight
-        }
-      }, 20)
-
-      //添加事件
-      if (scrollDom) {
-        scrollDom.addEventListener('touchstart', function (e) {
-          this.initTouch = e.targetTouches[0].screenY
-          console.log('初始点击' + this.initTouch)
-        })
-        scrollDom.addEventListener('touchend', function (e) {
-          scrollDom.style.top = -that.easyPointHeight + 'px'
-          scrollDom.style.height = contentHeight + 'px'
-        })
-        scrollDom.addEventListener('touchmove', function (e) {
-          //获取滚动的头部
-          let scTop = scrollDom.scrollTop
-
-          if (scTop === 0 && e.targetTouches[0].screenY - this.initTouch > 0) {
-            console.log('要下拉了')
-            that.setTop(e, scrollDom, this.initTouch)
-          } else if (scrollChildLength === scTop + contentHeight && e.targetTouches[0].screenY - this.initTouch < 0) {
-            console.log("要上拉了")
-            that.setTop(e, scrollDom, this.initTouch)
-          }
-        })
-      }
+      this.refreshHeight()
     }
   }
 </script>

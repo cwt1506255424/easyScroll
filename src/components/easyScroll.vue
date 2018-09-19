@@ -1,8 +1,8 @@
 <template>
   <div ref="easyContent" style="overflow-y: hidden">
-    <div class="easyPoint easyPointDown" v-if="needPullDown">下拉圆点</div>
+    <div class="easyPoint" v-if="needPullDown">下拉圆点</div>
     <slot></slot>
-    <div class="easyPoint easyPointUp" v-if="needPullUp" ref="easyPointUp">上拉圆点</div>
+    <div class="easyPoint" v-if="needPullUp" ref="easyPointUp">上拉圆点</div>
   </div>
 </template>
 
@@ -75,7 +75,7 @@
           scrollDom.addEventListener('touchmove', function (e) {
             //获取滚动的头部
             let scTop = scrollDom.scrollTop
-
+            console.log(scrollChildLength, scTop + contentHeight)
             if (scTop === 0 && e.targetTouches[0].screenY - that.initTouch > 0) {
               console.log('要下拉了')
               that.setTop(e, scrollDom, that.initTouch)
@@ -121,13 +121,5 @@
     text-align: center;
     line-height: 50px;
     position: relative;
-  }
-
-  .easyPointDown {
-    top: 0px;
-  }
-
-  .easyPointUp {
-    bottom: 0px;
   }
 </style>

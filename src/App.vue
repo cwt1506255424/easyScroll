@@ -2,7 +2,7 @@
   <div id="app">
     <!--<h1>hello easyScroll</h1>-->
     dhashdkjasdas
-    <easy-scroll :easyData="dataList">
+    <easy-scroll :easyData="dataList" @easy-pulldown="easyScrollDown" @easy-pullup="easyScrollUp">
       <div class="easyContentBox">
         <div>你是
           <div v-for="(item,index) in this.dataList" class="listItem" @click="show">
@@ -36,7 +36,13 @@
     },
     methods: {
       show: function () {
-        this.dataList.push(1,2,3,4)
+        this.dataList.push(1, 2, 3, 4)
+      },
+      easyScrollDown: function () {
+        alert("触发下拉刷新了")
+      },
+      easyScrollUp: function () {
+        alert("触发上拉刷新了")
       }
     },
     components: {easyScroll},

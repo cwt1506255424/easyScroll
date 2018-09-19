@@ -1,8 +1,8 @@
 <template>
   <div ref="easyContent" style="overflow-y: hidden">
-    <div class="easyPoint" v-if="needPullDown">下拉圆点</div>
+    <div class="easyPoint" v-if="needPullDown">下拉刷新</div>
     <slot></slot>
-    <div class="easyPoint" v-if="needPullUp" ref="easyPointUp">上拉圆点</div>
+    <div class="easyPoint" v-if="needPullUp" ref="easyPointUp">上拉加载</div>
   </div>
 </template>
 
@@ -23,6 +23,7 @@
       //需要监听父组件传递的数据，因为如果父组件是动态获取的数据，那么滚动需要在父组件变化的时候而变化
       easyData: {
         type: [Object, Array],
+
         required: true
       },
       //下拉刷新和上拉加载默认50px触发事件，可以修改
@@ -70,28 +71,48 @@
             that.initTouch = e.targetTouches[0].screenY
           }
           scrollDom.ontouchend = function (e) {
+
             scrollDom.style.top = -that.easyPointHeight + 'px'
             scrollDom.style.height = contentHeight + 'px'
+            if (that.emitPullDown) {
+              that.emitPullDown = false
+              that.$emit('easy-pulldown')
+            } else if (that.emitPullUp) {
+              that.emitPullUp = false
+              that.$emit('easy-pullup')
+            }
           }
           scrollDom.ontouchmove = function (e) {
             //获取滚动的头部
             let scTop = scrollDom.scrollTop
-            console.log(scrollChildLength, scTop + contentHeight)
+            //console.log(scrollChildLength, scTop + contentHeight)
             if (scTop === 0 && e.targetTouches[0].screenY - that.initTouch > 0) {
               console.log('要下拉了')
-              that.setTop(e, scrollDom, that.initTouch)
+              that.setTop(e, scrollDom, that.initTouch, 1)
             } else if (scrollChildLength === scTop + contentHeight && e.targetTouches[0].screenY - that.initTouch < 0) {
               console.log("要上拉了")
-              that.setTop(e, scrollDom, that.initTouch)
+              that.setTop(e, scrollDom, that.initTouch, 2)
             }
           }
         }
       },
       //设置top的方法
-      setTop: function (e, scrollDom, initTouch) {
+      //pullType 1表示下拉  2表示上拉
+      setTop: function (e, scrollDom, initTouch, pullType) {
         let diffY = (e.targetTouches[0].screenY - initTouch) / 4
         if (Math.abs(diffY) <= this.easyPointHeight) {
           scrollDom.style.top = (diffY - this.easyPointHeight) + 'px'
+          //到达某一个高度的时候可以触发事件
+          if (Math.abs(diffY) > this.easyPointHeight - 10) {
+            if (1 === pullType) {
+              this.emitPullDown = true
+            } else if (2 === pullType) {
+              this.emitPullUp = true
+            }
+          } else {
+            this.emitPullUp = false
+            this.emitPullDown = false
+          }
         }
       }
     },
@@ -102,7 +123,9 @@
     },
     data() {
       return {
-        initTouch: 0
+        initTouch: 0,
+        emitPullUp: false,
+        emitPullDown: false
       }
     },
     mounted: function () {

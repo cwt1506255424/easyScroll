@@ -65,14 +65,15 @@
 
         //添加事件
         if (scrollDom) {
-          scrollDom.addEventListener('touchstart', function (e) {
+          /*不要用addEventListener，不然刷新dom的时候不好删除事件*/
+          scrollDom.ontouchstart = function (e) {
             that.initTouch = e.targetTouches[0].screenY
-          })
-          scrollDom.addEventListener('touchend', function (e) {
+          }
+          scrollDom.ontouchend = function (e) {
             scrollDom.style.top = -that.easyPointHeight + 'px'
             scrollDom.style.height = contentHeight + 'px'
-          })
-          scrollDom.addEventListener('touchmove', function (e) {
+          }
+          scrollDom.ontouchmove = function (e) {
             //获取滚动的头部
             let scTop = scrollDom.scrollTop
             console.log(scrollChildLength, scTop + contentHeight)
@@ -83,7 +84,7 @@
               console.log("要上拉了")
               that.setTop(e, scrollDom, that.initTouch)
             }
-          })
+          }
         }
       },
       //设置top的方法
